@@ -1,6 +1,7 @@
 use std::alloc::System;
 use std::collections::HashMap;
 use std::num;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 
 #[derive(PartialEq, Clone, Copy)]
@@ -171,6 +172,10 @@ pub fn rotate90deg(input: Option<&Vec<BlockFace>>) -> Vec<BlockFace> {
 
 
 fn main() {
+
+    let start = Instant::now();
+
+
     let mut formation: Vec<BlockFace> = Vec::new();
     let mut rotations: Vec<Vec<BlockFace>> = Vec::new();
 
@@ -205,10 +210,10 @@ fn main() {
 
     //Search Range parameters
     //Make sure Y min and Y max are at least one apart. It will do whatever the lower one i
-    let xmin:i64 = -10000;
-    let xmax:i64 = 10000;
-    let zmin:i64 = -10000;
-    let zmax:i64 = 10000;
+    let xmin:i64 = -2000;
+    let xmax:i64 = 2000;
+    let zmin:i64 = -2000;
+    let zmax:i64 = 2000;
     let ymin:i64 = 59;
     let ymax:i64 = 60;
 
@@ -224,6 +229,8 @@ fn main() {
             rotations.push(rotate90deg(rotations.get(rotations.len() - 1)));
         }
     }
+
+
 
     for x in xmin..xmax {
         for z in zmin..zmax {
@@ -246,6 +253,11 @@ fn main() {
             }
         }
     }
+    let elapsed = start.elapsed();
+
+    println!("Finished!");
+    println!("Took {:?} Seconds to process", elapsed.as_secs());
+
 }
 
 
