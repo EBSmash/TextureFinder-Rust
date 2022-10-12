@@ -25,7 +25,7 @@ fn get_texture_type(x:i128, y:i128, z:i128) -> i128 {
     return texture_type;
 }
 
-fn compatible_rotation(generated_type:i128, bface: &BlockFace) -> (bool) {
+fn compatible_rotation(generated_type:i128, bface: &BlockFace) -> bool {
     if generated_type == 0
     {
         return bface.rotation==3;

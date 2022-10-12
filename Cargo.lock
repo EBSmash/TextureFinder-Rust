@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "TextureFinder-Rust"
+name = "texture_finder_rust"
 version = "0.1.0"
