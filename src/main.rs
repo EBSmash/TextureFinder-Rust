@@ -1,9 +1,3 @@
-use std::alloc::System;
-use std::collections::HashMap;
-use std::num;
-use std::time::{Instant, SystemTime, UNIX_EPOCH};
-
-
 #[derive(PartialEq, Clone, Copy)]
 pub enum Side{
     TOP, BOTTOM, WEST, EAST, SOUTH, NORTH
@@ -18,112 +12,112 @@ pub struct BlockFace{
 }
 
 
-pub fn get_coordinate_random(x:i128, y:i128, z:i128) -> (i128) {
+fn get_coordinate_random(x:i128, y:i128, z:i128) -> i128 {
     let mut i:i128 = (x * 3129871) as i128 ^ z * 116129781 ^ y;
     i = i * i * 42317861 + i * 11;
     // println!("Random Coordinate {}", i);
     return i;
 }
 
-pub fn get_texture_type(x:i128, y:i128, z:i128) -> (i128) {
-    let textureType =  ((get_coordinate_random(x, y, z) >> 16)%16).abs();
+fn get_texture_type(x:i128, y:i128, z:i128) -> i128 {
+    let texture_type =  ((get_coordinate_random(x, y, z) >> 16)%16).abs();
     // println!("Texture Type: {}", textureType);
-    return textureType;
+    return texture_type;
 }
 
-pub fn compatible_rotation(generated_type:i128, bface: &BlockFace) -> (bool) {
-    if(generated_type == 0)
+fn compatible_rotation(generated_type:i128, bface: &BlockFace) -> (bool) {
+    if generated_type == 0
     {
         return bface.rotation==3;
     }
-    if(generated_type == 1)
+    if generated_type == 1
     {
         return (bface.rotation==3 && (bface.side==Side::TOP||bface.side==Side::SOUTH))||
             (bface.rotation==2 && (bface.side==Side::WEST))||
             (bface.rotation==1 && (bface.side==Side::BOTTOM||bface.side==Side::NORTH))||
             (bface.rotation==0 && (bface.side==Side::EAST));
     }
-    if(generated_type == 2)
+    if generated_type == 2
     {
         return (bface.rotation==3 && (bface.side==Side::TOP||bface.side==Side::BOTTOM))||
             (bface.rotation==1 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM));
     }
-    if(generated_type == 3)
+    if generated_type == 3
     {
         return (bface.rotation==3 && (bface.side==Side::BOTTOM||bface.side==Side::SOUTH))||
             (bface.rotation==2 && (bface.side==Side::EAST))||
             (bface.rotation==1 && (bface.side==Side::TOP||bface.side==Side::NORTH))||
             (bface.rotation==0 && (bface.side==Side::WEST));
     }
-    if(generated_type == 4)
+    if generated_type == 4
     {
         return (bface.rotation==3 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM))||
             (bface.rotation==2 && (bface.side==Side::BOTTOM))||
             (bface.rotation==0 && (bface.side==Side::TOP));
     }
-    if(generated_type == 5)
+    if generated_type == 5
     {
         return (bface.rotation==3 && (bface.side==Side::WEST))||
             (bface.rotation==2 && (bface.side==Side::NORTH))||
             (bface.rotation==1 && (bface.side==Side::EAST))||
             (bface.rotation==0 && (bface.side==Side::TOP||bface.side==Side::BOTTOM||bface.side==Side::SOUTH));
     }
-    if(generated_type == 6)
+    if generated_type == 6
     {
         return (bface.rotation==1 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM))||
             (bface.rotation==2 && (bface.side==Side::BOTTOM))||
             (bface.rotation==0 && (bface.side==Side::TOP));
     }
-    if(generated_type == 7)
+    if generated_type == 7
     {
         return (bface.rotation==3 && (bface.side==Side::WEST))||
             (bface.rotation==2 && (bface.side==Side::SOUTH||bface.side==Side::TOP||bface.side==Side::BOTTOM))||
             (bface.rotation==1 && (bface.side==Side::EAST))||
             (bface.rotation==0 && (bface.side==Side::NORTH));
     }
-    if(generated_type == 8)
+    if generated_type == 8
     {
         return (bface.rotation==1 && (bface.side==Side::TOP||bface.side==Side::BOTTOM))||
             (bface.rotation==3 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM));
     }
-    if(generated_type == 9)
+    if generated_type == 9
     {
         return (bface.rotation==3 && (bface.side==Side::BOTTOM||bface.side==Side::NORTH))||
             (bface.rotation==2 && (bface.side==Side::EAST))||
             (bface.rotation==1 && (bface.side==Side::TOP||bface.side==Side::SOUTH))||
             (bface.rotation==0 && (bface.side==Side::WEST));
     }
-    if(generated_type == 10)
+    if generated_type == 10
     {
         return bface.rotation==1;
     }
-    if(generated_type == 11)
+    if generated_type == 11
     {
         return (bface.rotation==3 && (bface.side==Side::TOP||bface.side==Side::NORTH))||
             (bface.rotation==2 && (bface.side==Side::WEST))||
             (bface.rotation==1 && (bface.side==Side::BOTTOM||bface.side==Side::SOUTH))||
             (bface.rotation==0 && (bface.side==Side::EAST));
     }
-    if(generated_type == 12)
+    if generated_type == 12
     {
         return (bface.rotation==3 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM))||
             (bface.rotation==2 && (bface.side==Side::TOP))||
             (bface.rotation==0 && (bface.side==Side::BOTTOM));
     }
-    if(generated_type == 13)
+    if generated_type == 13
     {
         return (bface.rotation==3 && (bface.side==Side::EAST))||
             (bface.rotation==2 && (bface.side==Side::TOP||bface.side==Side::BOTTOM||bface.side==Side::SOUTH))||
             (bface.rotation==1 && (bface.side==Side::WEST))||
             (bface.rotation==0 && (bface.side==Side::NORTH));
     }
-    if(generated_type == 14)
+    if generated_type == 14
     {
         return (bface.rotation==1 && (bface.side!=Side::TOP&&bface.side!=Side::BOTTOM))||
             (bface.rotation==2 && (bface.side==Side::TOP))||
             (bface.rotation==0 && (bface.side==Side::BOTTOM));
     }
-    if(generated_type == 15)
+    if generated_type == 15
     {
         return (bface.rotation==3 && (bface.side==Side::EAST))||
             (bface.rotation==2 && (bface.side==Side::NORTH))||
@@ -137,24 +131,26 @@ pub fn rotate90deg(input: Option<&Vec<BlockFace>>) -> Vec<BlockFace> {
 
     let mut result:Vec<BlockFace> = vec![];
     let formation = input.unwrap();
-    for b in formation{
+    for b in formation {
+        
         let mut newside = Side::NORTH;
         let mut rotation = -1;
-        if (b.side == Side::TOP)
+        
+        if b.side == Side::TOP
         {
             newside = Side::TOP;
         }
-        if (b.side == Side::BOTTOM) {newside = Side::BOTTOM;}
-        if (b.side == Side::WEST) {newside = Side::SOUTH;}
-        if (b.side == Side::EAST) {newside = Side::NORTH;}
-        if (b.side == Side::SOUTH) {newside = Side::EAST;}
-        if (b.side == Side::NORTH) {newside = Side::WEST;}
+        if b.side == Side::BOTTOM {newside = Side::BOTTOM;}
+        if b.side == Side::WEST {newside = Side::SOUTH;}
+        if b.side == Side::EAST {newside = Side::NORTH;}
+        if b.side == Side::SOUTH {newside = Side::EAST;}
+        if b.side == Side::NORTH {newside = Side::WEST;}
 
-        if(b.side == Side::TOP)
+        if b.side == Side::TOP
         {
             rotation = (b.rotation+3)%4;
         }
-        else if(b.side == Side::BOTTOM)
+        else if b.side == Side::BOTTOM
         {
             rotation = (b.rotation+1)%4;
         }
@@ -165,6 +161,8 @@ pub fn rotate90deg(input: Option<&Vec<BlockFace>>) -> Vec<BlockFace> {
         result.push(BlockFace { x: b.z, y: b.y, z: b.z, side: newside, rotation });
     }
     return result;
+    
+    
 }
 
 
@@ -172,8 +170,6 @@ pub fn rotate90deg(input: Option<&Vec<BlockFace>>) -> Vec<BlockFace> {
 
 
 fn main() {
-
-    let start = Instant::now();
 
 
     let mut formation: Vec<BlockFace> = Vec::new();
@@ -225,7 +221,7 @@ fn main() {
 
     if use_all_rotations
     {
-        for n in 0..3 {
+        for _n in 0..3 {
             rotations.push(rotate90deg(rotations.get(rotations.len() - 1)));
         }
     }
@@ -238,7 +234,7 @@ fn main() {
                 for f in &rotations{
                     let mut found = true;
                     for b in f{
-                        let mut texture = get_texture_type((x + b.x) as i128, (y + b.y) as i128, (z + b.z) as i128);
+                        let texture = get_texture_type((x + b.x) as i128, (y + b.y) as i128, (z + b.z) as i128);
                         if !compatible_rotation(texture, b)
                         {
                             found=false;
@@ -253,10 +249,8 @@ fn main() {
             }
         }
     }
-    let elapsed = start.elapsed();
 
     println!("Finished!");
-    println!("Took {:?} Seconds to process", elapsed.as_secs());
 
 }
 
